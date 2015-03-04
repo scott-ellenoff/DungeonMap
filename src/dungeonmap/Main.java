@@ -2,6 +2,7 @@ package dungeonmap;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+
 import javax.imageio.*;
 public class Main {
 
@@ -10,15 +11,16 @@ public class Main {
 		//[2] is the level of the player, [3] is the number of players
 		int xAmount= Integer.parseInt(args[0]);
 		int yAmount= Integer.parseInt(args[1]);
-		int level= Integer.parseInt(args[2]);
-		int playerNum= Integer.parseInt(args[3]);
+		int roomDensity= Integer.parseInt(args[2]);
+		int level= Integer.parseInt(args[3]);
+		int playerNum= Integer.parseInt(args[4]);
 		
 		System.out.println(totalXp(level,playerNum));
 		System.out.println("/*********************************\\");
 		int[][] map= makeMap(xAmount, yAmount);
 		printMap(map);
 		System.out.println("/*********************************\\");
-		map= genFullMap(map);
+		map= genFullMap(map, roomDensity);
 		printMap(map);
 	}
 
@@ -58,20 +60,54 @@ public class Main {
 			System.out.println();
 		}
 	}
-	
-	public static int[][] genFullMap(int[][] map){
+	static int[] prevX= new int[10];
+	static int[] prevY= new int[10];
+	static int[] prevSize=new int[10];
+	public static int[][] genFullMap(int[][] map, int roomDensity){
 		//0 = wall 1= free tile
 		//rooms are always started in the top right corner
-		int yCorRoom= (int) (Math.random()*(map.length-5))+1;
-		int xCorRoom= (int)(Math.random()*(map[yCorRoom].length-5))+1;
-		
-		for(int i= yCorRoom; i<yCorRoom+4; i++){
-			for(int j= xCorRoom; j<xCorRoom+4; j++){
-				map[i][j]=1;
-			}
+		for(int x=0; x<roomDensity; x++){
+			genRoom(map,x);
 		}
 		
 		return map;
 	}
+	
+	public static int[][] genRoom(int[][]map, int number){
+		
+		int yCorRoom= (int) (Math.random()*(map.length-5))+1;
+		int xCorRoom= (int)(Math.random()*(map[yCorRoom].length-5))+1;
+		for(int i=0; i<10; i++){
+			for(int xSize=0; xSize<prevSize[i]; xSize++){
+				if(xCorRoom==prevX[i]+xSize){
+					xCorRoom= (int) (xCorRoom+Math.random()*5+prevSize[i]);
+				}
+				if(yCorRoom==prevY[i]+xSize){
+					yCorRoom=(int)(yCorRoom+Math.random()*5+prevSize[i]);
+				}
+				if(yCorRoom>map.length || xCorRoom>map[0].length){
+					return map;
+				}
+			}
+		}
+		
+		int size= (int)(Math.random()*6)+2;
+		
+		for(int i= yCorRoom; i<yCorRoom+size; i++){
+			for(int j= xCorRoom; j<xCorRoom+size; j++){
+				if(i<map.length){
+					if(j<map[0].length){
+						map[i][j]=1;
+					}
+				}
+			}
+		}
+		prevX[number]=xCorRoom;
+		prevY[number]= yCorRoom;
+		prevSize[number]=size;
+		return map;
+	}
 }
+
+
 
