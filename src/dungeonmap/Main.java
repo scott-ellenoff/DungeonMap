@@ -5,7 +5,7 @@ import java.io.*;
 
 import javax.imageio.*;
 public class Main {
-
+	//GABE CAN EDIT
 	public static void main(String[] args) {
 		// string args spots, [0] is the x demension of the picture by tiles, [1] is the y demension of the picture
 		//[2] is the level of the player, [3] is the number of players
