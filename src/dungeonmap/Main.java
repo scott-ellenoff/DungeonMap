@@ -76,23 +76,38 @@ public class Main {
 		return map;
 	}
 	
-	public static void writer(int[] rooms){
-		PrintWriter writer = new PrintWriter("description.txt", "UTF-8");
+	public static void writer(int[] rooms, int level){
+		PrintWriter writer;
+		try {
+			writer= new PrintWriter("description.txt", "UTF-8");
+		}
+		catch (IOException e){
+			writer =null;
+		}
 		for (int i =0; i <= rooms.length; i++) {
-		writer.println(roomDescript(rooms[i]));
+		writer.println(roomDescript(evalSize(rooms[i]),level));
 		}
 		writer.close();
 	
 	}
-	public static String roomDescript(int size){
-		String desc= "The dungeon contains a ";
-		desc += monsterGen(1);
+	public static String roomDescript(int size, int level){
+		String desc= "Encounter: ";
+		for (int i =0; i < size; i++) desc += monsterGen(level);
+		desc += room.randDescribe();
 		return desc;
-		
 	}
 	
-	public static String monsterGen(int x){
-		int num= (int)(Math.random()*(x*5));
+	public int evalSize(int x1, int y1, int x2, int y2){
+		int hold = (x2-x1)*(y2-y1);
+		if (hold <=12) return 0;
+		if (hold <=25) return 1;
+		if (hold <=45) return 2;
+		if (hold <=75) return 3;
+		else return 4;
+	}
+	
+	public static String monsterGen(int level){
+		int num= (int)(Math.random()*(level*5));
 		String [] list = new String [30];
 		list[0] = "Direrat";
 		list[1] = "Hobgoblin";
@@ -128,6 +143,7 @@ public class Main {
 		return list[num];
 		
 	}
+	
 	
 	
 	public static int[][] genRoom(int[][]map, int number){
