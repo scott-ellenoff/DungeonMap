@@ -6,6 +6,7 @@ import java.io.*;
 import javax.imageio.*;
 public class Main {
 	//GABE CAN EDIT
+	
 	public static void main(String[] args) {
 		// string args spots, [0] is the x demension of the picture by tiles, [1] is the y demension of the picture
 		//[2] is the level of the player, [3] is the number of players
@@ -23,6 +24,8 @@ public class Main {
 		map= genFullMap(map, roomDensity);
 		printMap(map);
 	}
+	
+	
 
 	public static BufferedImage readImage(String name){
 		BufferedImage bufferedImage;
@@ -72,6 +75,60 @@ public class Main {
 		
 		return map;
 	}
+	
+	public static void writer(int[] rooms){
+		PrintWriter writer = new PrintWriter("description.txt", "UTF-8");
+		for (int i =0; i <= rooms.length; i++) {
+		writer.println(roomDescript(rooms[i]));
+		}
+		writer.close();
+	
+	}
+	public static String roomDescript(int size){
+		String desc= "The dungeon contains a ";
+		desc += monsterGen(1);
+		return desc;
+		
+	}
+	
+	public static String monsterGen(int x){
+		int num= (int)(Math.random()*(x*5));
+		String [] list = new String [30];
+		list[0] = "Direrat";
+		list[1] = "Hobgoblin";
+		list[2] = "small troll";
+		list[3] = "wolf";
+		list[4] = "Swarm of rats";
+		list[5] = "Goblin";
+		list[6] = "Mutant Boar";
+		list[7] = "Zombie";
+		list[8] = "Feral owl";
+		list[9] = "Leopard";
+		list[10] = "Slime";
+		list[11] = "Swarm of Bats";
+		list[12] = "Basilisk";
+		list[13] = "Chimera";
+		list[14] = "Demon";
+		list[15] = "Cyclops";
+		list[16] = "Drow";
+		list[17] = "Angry Midget";
+		list[18] = "Jerry";
+		list[19] = "Ghoul";
+		list[20] = "Griffin";
+		list[21] = "Halfling";
+		list[22] = "Hydra";
+		list[23] = "Kobold";
+		list[24] = "Dragon";
+		list[25] = "Lycanthrope";
+		list[26] = "Wizard";
+		list[27] = "Minatour";
+		list[28] = "Witch";
+		list[29] = "Orc";
+		list[30] = "OwlBear";
+		return list[num];
+		
+	}
+	
 	
 	public static int[][] genRoom(int[][]map, int number){
 		
