@@ -3,7 +3,7 @@ package dungeonmap;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
-import javax.imageio.*;
+import javax.imageio.ImageIO;
 public class Main {
 	//GABE CAN EDIT
 	
@@ -25,20 +25,6 @@ public class Main {
 		printMap(map);
 	}
 	
-	
-
-	public static BufferedImage readImage(String name){
-		BufferedImage bufferedImage;
-		try
-		{
-			bufferedImage= ImageIO.read(new File("/Users/al/some-picture.jpg"));
-		}
-		catch(IOException e)
-		{
-			bufferedImage=null;
-		}
-		return bufferedImage;
-	}
 	public static int totalXp(int level, int playerNum){
 		int totalXp= -1;
 		int[] xpByLevel= {400,500,600,700,800,1000,1200,1400,1600,2000,2400,2800,3200,4000,4800,5600, 6400, 8000, 9600, 11200, 12800, 16600, 20400,24200,2800,36000,44000,52000,60000,76000}; 
@@ -72,6 +58,7 @@ public class Main {
 		for(int x=0; x<roomDensity; x++){
 			genRoom(map,x);
 		}
+		genCorridors(map, roomDensity);
 		
 		return map;
 	}
@@ -164,7 +151,7 @@ public class Main {
 			}
 		}
 		
-		int size= (int)(Math.random()*6)+2;
+		int size= (int)(Math.random()*6)+3;
 		
 		for(int i= yCorRoom; i<yCorRoom+size; i++){
 			for(int j= xCorRoom; j<xCorRoom+size; j++){
@@ -179,6 +166,81 @@ public class Main {
 		prevY[number]= yCorRoom;
 		prevSize[number]=size;
 		return map;
+	}
+	
+	public static int[][] genCorridors(int[][]map, int rooms){
+		
+		for(int i=1; i<rooms; i=i+2){
+			int curX=0;
+			int xDistanceAmount= Math.abs(prevX[i]-prevX[i-1]);
+			int yDistanceAmount= Math.abs(prevY[i]-prevY[i-1]);
+			if(prevX[i]<prevX[i-1]){
+				for(int j=prevX[i]; j<=prevX[i]+xDistanceAmount; j++){
+					if(j<map[0].length){
+						map[prevY[i]][j]=1;
+						curX=j;
+					}
+				}
+			}
+			else{
+				for(int j=prevX[i]; j>=prevX[i]-xDistanceAmount; j--){
+					if(j<map[0].length){
+						map[prevY[i]][j]=1;
+						curX=j;
+					}
+				}
+			}
+			if(prevY[i]<prevY[i-1]){
+				for(int k=prevY[i]; k<prevY[i]+yDistanceAmount; k++){
+					if(k<map.length){
+						map[k][curX]=1;
+					}
+				}
+			}
+			else{
+				for(int k=prevY[i]; k>prevY[i]-yDistanceAmount; k--){
+					if(k<map.length){
+						map[k][curX]=1;
+					}
+				}
+			}
+		}
+		
+		return map;
+	}
+	
+	public static void createImage(int map[][], int xTotal, int yTotal){
+		File file1= new File("wall.jpg");
+		File file2= new File("tile.jpg");
+		
+		BufferedImage wall= ImageIO.read(file1);
+		BufferedImage tile= ImageIO.read(file2);
+		
+		int widthImg1= wall.getWidth();
+		int heightImg1= wall.getHeight();
+		
+		BufferedImage mapF= new BufferedImage(
+				widthImg1*xTotal,
+				widthImg1*yTotal,
+				 BufferedImage.TYPE_INT_RGB
+				);
+		
+		for(int y=0; y<map.length; y++){
+			for( int x=0; x<map[y].length; y++){
+				boolean imageDrawn;
+				if(map[y][x]==0){
+					imageDrawn= mapF.createGraphics().drawImage(wall,y*heightImg1, x*widthImg1, null);
+				}
+				else{
+					imageDrawn= mapF.createGraphics().drawImage(tile,y*heightImg1, x*widthImg1, null);
+				}
+				if(!imageDrawn){
+					System.out.println("ERROR ERROR");
+				}
+			}
+		}
+		File final_image= new File("Dungeon.jpg");
+		boolean finalImageDrawing= ImageIO.write(mapF, "jpeg", final_image);
 	}
 }
 
