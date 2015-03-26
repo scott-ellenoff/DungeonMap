@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
 public class Main {
 	//GABE CAN EDIT
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// string args spots, [0] is the x demension of the picture by tiles, [1] is the y demension of the picture
 		//[2] is the level of the player, [3] is the number of players
 		int xAmount= Integer.parseInt(args[0]);
@@ -23,6 +23,7 @@ public class Main {
 		System.out.println("/*********************************\\");
 		map= genFullMap(map, roomDensity);
 		printMap(map);
+		createImage(map, xAmount, yAmount);
 	}
 	
 	public static int totalXp(int level, int playerNum){
@@ -209,24 +210,24 @@ public class Main {
 		return map;
 	}
 	
-	public static void createImage(int map[][], int xTotal, int yTotal){
-		File file1= new File("wall.jpg");
-		File file2= new File("tile.jpg");
+	public static void createImage(int map[][], int xTotal, int yTotal) throws IOException{
+		
+		File file1= new File("data/wall.jpg");
+		File file2= new File("data/tile.jpg");
 		
 		BufferedImage wall= ImageIO.read(file1);
 		BufferedImage tile= ImageIO.read(file2);
 		
 		int widthImg1= wall.getWidth();
 		int heightImg1= wall.getHeight();
-		
 		BufferedImage mapF= new BufferedImage(
 				widthImg1*xTotal,
 				widthImg1*yTotal,
 				 BufferedImage.TYPE_INT_RGB
 				);
 		
-		for(int y=0; y<map.length; y++){
-			for( int x=0; x<map[y].length; y++){
+		for(int y=0; y<yTotal-1; y++){
+			for( int x=0; x<xTotal-1; x++){
 				boolean imageDrawn;
 				if(map[y][x]==0){
 					imageDrawn= mapF.createGraphics().drawImage(wall,y*heightImg1, x*widthImg1, null);
@@ -240,7 +241,19 @@ public class Main {
 			}
 		}
 		File final_image= new File("Dungeon.jpg");
-		boolean finalImageDrawing= ImageIO.write(mapF, "jpeg", final_image);
+		try {
+			boolean finalImageDrawing= ImageIO.write(mapF, "jpg", final_image);
+			if(!finalImageDrawing){
+				System.out.println("error: write");
+			}
+			else{
+				System.out.println("sucess");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("error: write2");
+		}
 	}
 }
 
