@@ -218,11 +218,11 @@ public class Main {
 	
 	public static int[][] genCorridors(int[][]map, int rooms){
 		
-		for(int i=1; i<rooms; i=i+2){
+		for(int i=1; i<rooms; i=i+1){
 			int curX=0;
 			int xDistanceAmount= Math.abs(prevX[i]-prevX[i-1]);
 			int yDistanceAmount= Math.abs(prevY[i]-prevY[i-1]);
-			if(prevX[i]<prevX[i-1]){
+			if(prevX[i]<=prevX[i-1]){
 				for(int j=prevX[i]; j<=prevX[i]+xDistanceAmount; j++){
 					if(j<map[0].length){
 						map[prevY[i]][j]=1;
@@ -238,7 +238,7 @@ public class Main {
 					}
 				}
 			}
-			if(prevY[i]<prevY[i-1]){
+			if(prevY[i]<=prevY[i-1]){
 				for(int k=prevY[i]; k<prevY[i]+yDistanceAmount; k++){
 					if(k<map.length){
 						map[k][curX]=1;
@@ -276,7 +276,7 @@ public class Main {
 		for(int y=0; y<yTotal-1; y++){
 			for( int x=0; x<xTotal-1; x++){
 				boolean imageDrawn;
-				if(map[y][x]==0){
+				if(map[x][y]==0){
 					imageDrawn= mapF.createGraphics().drawImage(wall,y*heightImg1, x*widthImg1, null);
 				}
 				else{
