@@ -2,6 +2,10 @@ package dungeonmap;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 public class Main {
@@ -24,6 +28,7 @@ public class Main {
 		map= genFullMap(map, roomDensity);
 		printMap(map);
 		createImage(map, xAmount, yAmount);
+		writer(level);
 	}
 	
 	public static int totalXp(int level, int playerNum){
@@ -64,27 +69,71 @@ public class Main {
 		return map;
 	}
 	
-	public static void writer(int[] rooms, int level){
-		PrintWriter writer;
+	public static void writer(int level){
+		String desc = "";
+		int randNum= (int)(Math.floor(Math.random()*(6)));
+		String [] intro = new String [6];
+			intro[0] = "As you run into the large ominous doors they quickly shut behind you. You are locked in. ";
+			intro[1] = "As you cautiously enter the dungeon, the large decrepit doors fall behind you (Catch them 18DC Athletics) -alerting anyone within the dungeon of your presence. "; 
+			intro[2] = "You walk in and immediately trigger a trip wire an alarm rings and a volley of arrows falls from the ceiling (15DC Athletics, 6 Damage). ";
+			intro[3] = "Rats inside the room shriek when they hear you open the door, then they run in all directions from a putrid corpse lying in the center of the floor. ";
+			intro[4] = "You descend the stairs into the dungeon, corpses and pieces of corpses hang from hooks that dangle from chains attached to thick iron rings. ";
+			intro[5] = "As you enter the dungeon, your eyes jump to the single occupant of the room you stand in: a statue of a male figure with elven features but the broad, muscular body of a hale human. It kneels on the floor as though fallen to that posture. Both its arms reach upward in supplication, and its face is a mask of grief.";
+		desc+=intro[randNum];
+		randNum= (int)(Math.floor(Math.random()*(6)));
+		String [] enviorment = new String [6];
+			enviorment[0] = " The room is filled with thick smoke. You see no fire, but that doesn't mean much when you can only see a few feet in front of you anyway. You start coughing -almost suffocated by the lack of air.";
+			enviorment[1] = " Speckles of blood paint the floor and walls, it looks fresh. Light enters through cracks on the walls, but there are no windows.";
+			enviorment[2] = " There are no windows, the room is pitch black. The air tastes stale, and the entire place reeks of forgotton corpses";
+			enviorment[3] = " As you enter further, you notice odd patterns and images covering the floor and walls, you recognize them, but from where?";
+			enviorment[4] = " Stinking smoke wafts up from braziers made of skulls set around the edges of this room. The walls bear scratch marks and lines of soot that form crude pictures and what looks like words in some language [Goblin]. ";
+			enviorment[5] = " The room stinks with the wet, pungent scent of mildew.";
+		desc+=enviorment[randNum];
+		randNum= (int)(Math.floor(Math.random()*(5)));
+		String [] structure = new String [5];
+			structure[0] = " The air is freezing, you start to shiver. Ice covers the floor, and you fear you might slip with every step you take.";
+			structure[1] = " The room is boiling hot. Puddles of what look to be some sort of black bubbling liquid are scattered across the floor.";
+			structure[2] = " The walls are black, and the floor is made of marble. The cielings are 20 feet high at the lowest.";
+			structure[3] = " The walls are decrepit and peeling. The strongest among you might even be able to bash straight through them.";
+			structure[4] = " Black mold grows in tangled veins across the walls and parts of the floor. It looks like it might be safe to travel through. A path of stone clean of mold wends its way through the hallway.";
+		desc+=structure[randNum];
+		randNum= (int)(Math.floor(Math.random()*(5)));
+		String [] tenor = new String [5];
+			tenor[0] = " The place reminds you of home... but something is amiss.";
+			tenor[1] = " The place buzzes with the strange power of an old arcane art, the likes of which your party has never encountered before.";
+			tenor[2] = " You immediately have a bad feeling about this place, this is no ordinary cavern.";
+			tenor[3] = " The ground shakes and nearly throws you off your feet, there is something very old and powerful lurking within this dungeon, and it senses your prescence.";
+			tenor[4] = " The place seems pretty straightforward, not unlike other dungeons you have seen.";
+		desc+=tenor[randNum];	
+		randNum= (int)(Math.floor(Math.random()*(2)));
+		String [] monsters = new String [3];
+			monsters[0] = " [For the DM] Mosters lurk throughout the dungeon, rooms are filled with " + monsterGen(level) + " and "+ monsterGen(level);
+			monsters[1] = " [For the DM] There is a small gathering of " + monsterGen(level) + " in the next room. Them and groups of " + monsterGen(level) + " lurk throughout.";
+		desc+=monsters[randNum];
+		randNum= (int)(Math.floor(Math.random()*(5)));
+		String [] endGoal = new String [5];
+			endGoal[0] = " The group hopes to reach the end of the dungeoon, for it is rumored to contain a hoard of treasure";
+			endGoal[1] = " Your party has been paid by the local town to exterminate whatever lies within this dungeon, as they have become a nuissance to the local residence.";
+			endGoal[2] = " Your party has been tracking an evil leprachaun for days, all clues point to this dungeon. Hopefully you will find him.. and his pot of gold.";
+			endGoal[3] = " There is rumored to be a strong arcane book somewhere in this dungeon, your group believes if they find it they might be able to sell it for great profit";
+			endGoal[4] = " On the other side of the dungeon is the entrance to an ancient dwarven civilaztion, your group believes that there they might be able to gain some reward from the dwarves for clearing out the tunnel.";
+		desc+=endGoal[randNum];
 		try {
-			writer= new PrintWriter("description.txt", "UTF-8");
+			File file = new File("text.txt");
+			// if file doesnt exists, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(desc);
+			bw.close();
+			System.out.println("Done");
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		catch (IOException e){
-			writer =null;
-		}
-		for (int i =0; i <= rooms.length; i++) {
-		writer.println(roomDescript(evalSize(rooms[i]),level));
-		}
-		writer.close();
-	
+		
 	}
-	public static String roomDescript(int size, int level){
-		String desc= "Encounter: ";
-		for (int i =0; i < size; i++) desc += monsterGen(level);
-		desc += room.randDescribe();
-		return desc;
-	}
-	
 	public int evalSize(int x1, int y1, int x2, int y2){
 		int hold = (x2-x1)*(y2-y1);
 		if (hold <=12) return 0;
@@ -96,43 +145,41 @@ public class Main {
 	
 	public static String monsterGen(int level){
 		int num= (int)(Math.random()*(level*5));
-		String [] list = new String [30];
-		list[0] = "Direrat";
-		list[1] = "Hobgoblin";
-		list[2] = "small troll";
-		list[3] = "wolf";
-		list[4] = "Swarm of rats";
-		list[5] = "Goblin";
-		list[6] = "Mutant Boar";
-		list[7] = "Zombie";
-		list[8] = "Feral owl";
-		list[9] = "Leopard";
-		list[10] = "Slime";
-		list[11] = "Swarm of Bats";
-		list[12] = "Basilisk";
-		list[13] = "Chimera";
-		list[14] = "Demon";
-		list[15] = "Cyclops";
-		list[16] = "Drow";
-		list[17] = "Angry Midget";
-		list[18] = "Jerry";
-		list[19] = "Ghoul";
-		list[20] = "Griffin";
-		list[21] = "Halfling";
-		list[22] = "Hydra";
-		list[23] = "Kobold";
-		list[24] = "Dragon";
-		list[25] = "Lycanthrope";
-		list[26] = "Wizard";
-		list[27] = "Minatour";
-		list[28] = "Witch";
-		list[29] = "Orc";
-		list[30] = "OwlBear";
+		String [] list = new String [35];
+		list[0] = "Direrats";
+		list[1] = "Hobgoblins";
+		list[2] = "small trolls";
+		list[3] = "wolfs";
+		list[4] = "Swarms of rats";
+		list[5] = "Goblins";
+		list[6] = "Mutant Boars";
+		list[7] = "Zombies";
+		list[8] = "Feral owls";
+		list[9] = "Leopards";
+		list[10] = "Slimes";
+		list[11] = "Swarms of Bats";
+		list[12] = "Basilisks";
+		list[13] = "Chimeras";
+		list[14] = "Demons";
+		list[15] = "Cyclopses";
+		list[16] = "Drows";
+		list[17] = "Angry Midgets";
+		list[18] = "Jerrys";
+		list[19] = "Ghouls";
+		list[20] = "Griffins";
+		list[21] = "Halflings";
+		list[22] = "Hydras";
+		list[23] = "Kobolds";
+		list[24] = "Dragons";
+		list[25] = "Lycanthropes";
+		list[26] = "Wizards";
+		list[27] = "Minatours";
+		list[28] = "Witchs";
+		list[29] = "Orcs";
+		list[30] = "OwlBears";
 		return list[num];
 		
 	}
-	
-	
 	
 	public static int[][] genRoom(int[][]map, int number){
 		
